@@ -1,4 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
+var soundplayer = require('./soundplayer');
 require('dotenv').config();
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds,
@@ -35,7 +36,25 @@ const commands = [
       message.channel.send(`${message.author} asked me to poke <@${results.first().id}> because they wont do it themselves.`);
     },
   },
-  // Add more commands here...
+  {
+    commandPrefix: '!playaudio',
+    description: 'play a sound file',
+    async execute(message, args) {
+      
+      const filename = args.shift();
+
+      if (!message.member.voice) {
+        message.reply('You must be in a voice channel to use this command.');
+        return;
+      }
+
+      soundplayer.playSoundM(message.member.voice, "testsound.mp3");
+      //const results = await guild.members.fetch({query: nickname, limit:1});
+      //console.log(`${results.first().id}`);
+
+      //message.channel.send(`${message.author} asked me to poke <@${results.first().id}> because they wont do it themselves.`);
+    },
+  },
 ];
 
 client.on('ready', () => {
@@ -44,7 +63,7 @@ client.on('ready', () => {
 
 client.on('messageCreate', async message => {
 
-  if (message.author.bot) return false;
+  if (message.author.bot || !message.guild) return false;
 
   // Loop through commands array and call execute() method
 
